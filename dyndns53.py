@@ -111,19 +111,16 @@ def r53_upsert(host, hostconf, ip, record_type):
     )
 
     old_ip = None
-    if not record_set:
+    if not record_set or not record_set['ResourceRecordSets']:
         logger.info(f"No existing record found for host {host} in zone {hostconf['zone_id']}")
     else:
-        try:
-            record = record_set['ResourceRecordSets'][0]
-            if record['Name'] == host and record['Type'] == record_type:
-                if len(record['ResourceRecords']) == 1:
-                    for subrecord in record['ResourceRecords']:
-                        old_ip = subrecord['Value']
-                else:
-                    raise ValueError(f"Multiple existing records found for host {host} in zone {hostconf['zone_id']}")
-        except IndexError:
-            raise ValueError(f"No existing record found for host {host} in zone {hostconf['zone_id']}")
+        record = record_set['ResourceRecordSets'][0]
+        if record['Name'] == host and record['Type'] == record_type:
+            if len(record['ResourceRecords']) == 1:
+                for subrecord in record['ResourceRecords']:
+                    old_ip = subrecord['Value']
+            else:
+                raise ValueError(f"Multiple existing records found for host {host} in zone {hostconf['zone_id']}")
 
     if old_ip == ip:
         logger.debug(f"Old IP same as new IP: {ip}")

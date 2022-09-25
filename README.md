@@ -35,7 +35,7 @@ The Lambda function will require an execution role, and that role needs permissi
 
 The Lambda function parses the client update request and performs the update in Route 53.
 
-1. Modify the `conf` dictionary in `dyndns53.py` with your desired configuration, replacing `<username>`, `<password>`, `<host.example.com.>`, and `<MY_ZONE_ID>`. You can also optionally modify the TTL value used when updating the host's record.
+1. Modify the `conf` dictionary in `dyndns53_conf.py` with your desired configuration, replacing `<username>`, `<password>`, `<host.example.com.>`, and `<MY_ZONE_ID>`. You can also optionally modify the TTL value used when updating the host's record.
    ```
    conf = {
       '<username>:<password>': {
@@ -57,10 +57,12 @@ The Lambda function parses the client update request and performs the update in 
 1. Sign into AWS and navigate to the Lambda Console.
 1. Click "Create Lambda Function", and "Skip" selecting a blueprint.
 1. Give your function a name (I used `dyndns53_lambda`) and set the runtime to Python 3.8.
-1. Paste the contents of `dyndns53.py` into the "Lambda function code" box, making sure you have updated your `conf` appropriately.
+1. Paste the contents of `dyndns53.py` into the "Lambda function code" box.
 1. Select the execution role you created above in the "Role" drop-down list; leave "Handler" as `lambda_function.lambda_handler`.
 1. Under "Advanced settings", you may wish to increase the timeout from 3 s to 10 s. Calls from Lambda to other AWS services can sometimes be slow.
 1. Click "Next", review, then click "Create Function."
+1. Create a new file named `dyndns53_conf.py` in the "Lambda function code source" editor and paste the contents of `dyndns53_conf.py` into the "Lambda function code" box, making sure you have updated your `conf` appropriately.
+1. Save both source files and click "Deploy".
 
 #### Test your Lambda funciton (optional)
 

@@ -13,6 +13,8 @@ import sys
 
 import boto3
 
+from dyndns53_conf import region, conf
+
 
 class AuthorizationMissing(Exception):
     status = 401
@@ -42,23 +44,6 @@ class BadAgentException(Exception):
 class AbuseException(Exception):
     status = 403
     response = "abuse"
-
-
-conf = {
-   '<username>:<password>': {
-      'hosts': {
-         '<host.example.com.>': {  # FQDN (don't forget trailing `.`)
-            'aws_region': 'us-west-2',  # not actually important
-            'zone_id': '<MY_ZONE_ID>',  # same zone ID as in `iam_policy`
-            'record': {
-               'ttl': 60,  # TTL in seconds; should be low for DDNS
-               # 'type': 'A',  # Type is now inferred from IP type
-            },
-            'last_update': None,  # not currently used
-         }
-      }
-   }
-}
 
 
 # https://stackoverflow.com/a/56081104
@@ -116,7 +101,7 @@ def _parse_ip(ipstring, force_global=True):
 
 
 def r53_upsert(host, hostconf, ip, record_type):
-    client53 = boto3.client('route53', 'eu-west-3')
+    client53 = boto3.client('route53', region)
 
     record_set = client53.list_resource_record_sets(
         HostedZoneId=hostconf['zone_id'],
